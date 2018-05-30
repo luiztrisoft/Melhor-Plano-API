@@ -6,7 +6,7 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-/* GET home page. */
+/* Recupera dados de um json */
 router.get('/list-all-broadband', function (req, res, next) {
   res.send([
     { "Name": "Broadband1", "Price": 40.00, "Type": "bb" },
