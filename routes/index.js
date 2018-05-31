@@ -8,15 +8,10 @@ router.get('/', function (req, res, next) {
 
 /* Recupera dados de um json */
 router.get('/list-all-broadband', function (req, res, next) {
-  res.send(
-    // {
-    //   "Banda Larga 1":{"id":1, "Name": "Broadband1", "Price": 40.00, "Type": "bb" },
-    //   "Banda Larga 2":{"id":1, "Name": "Broadband2", "Price": 60.00, "Type": "bb" }       
-    // }
-
+  res.send(  
    [ 
      {
-      "nome":"Banda larga 1",
+      "descricao":"Internet",
       "pacote":[
         {"id":1, "Name": "Broadband1", "Price": 40.00, "Type": "bb" }        
       ],      
@@ -24,22 +19,94 @@ router.get('/list-all-broadband', function (req, res, next) {
     },
 
     {
-      "nome":"Banda larga 2",
+      "descricao":"Internet + Banda adicional",
       "pacote":[
-        {"id":2, "Name": "Broadband2", "Price": 60.00, "Type": "bb" }        
-      ],
-      "total":60.00      
+        {"id":1, "Name": "Broadband1", "Price": 40.00, "Type": "bb" },
+        {"id":6, "Name": "AddonBB", "Price": 0.00, "Type": "addon" }
+      ],      
+      "total":50.00
     },
 
     {
-      "nome" : "Banda Larga + TV",
+      "descricao":"Internet + Fixo",
       "pacote":[
-        {"id":1, "Name": "Broadband2", "Price": 60.00, "Type": "bb" },
+        {"id":1, "Name": "Broadband1", "Price": 40.00, "Type": "bb" },
+        {"id":5, "Name": "Landline", "Price": 35.00, "Type": "ll" }
+      ],      
+      "total":70.00
+    },
+
+    {
+      "descricao":"Internet + Banda adicional + Fixo",
+      "pacote":[
+        {"id":1, "Name": "Broadband1", "Price": 40.00, "Type": "bb" },
+        {"id":5, "Name": "Landline", "Price": 35.00, "Type": "ll" },
+        {"id":6, "Name": "AddonBB", "Price": 0.00, "Type": "addon" }
+      ],      
+      "total":80.00
+    },
+
+    //PLUS -------------------------------------------------------------------------------
+
+    {
+      "descricao":"Internet (Fibra)",
+      "pacote":[
+        {"id":2, "Name": "Broadband2", "Price": 60.00, "Type": "bb" },
+        
+      ],      
+      "total":60.00
+    },
+    {
+      "descricao":"Internet (Fibra) + Banda adicional",
+      "pacote":[
+        {"id":2, "Name": "Broadband2", "Price": 60.00, "Type": "bb" },
+        {"id":6, "Name": "AddonBB", "Price": 0.00, "Type": "addon" }        
+      ],      
+      "total":60.00
+    },
+    {
+      "descricao":"Internet (Fibra) + TV",
+      "pacote":[
+        {"id":2, "Name": "Broadband2", "Price": 60.00, "Type": "bb" },
+        {"id":3, "Name": "TV1", "Price": 50.00, "Type": "tv" }
+      ],      
+      "total":0.00//TODO
+    },
+    {
+      "descricao":"Internet (Fibra) + TV + 30 canais",
+      "pacote":[
+        {"id":2, "Name": "Broadband2", "Price": 60.00, "Type": "bb" },
         {"id":3, "Name": "TV1", "Price": 50.00, "Type": "tv" },
-        { "Name": "AddonBB", "Type": "addon", "additionalValue": 10.00, "Price":0.00 }  
-      ],
-      "total":90.00// ainda sem desconto
-    }
+        {"id":7, "Name": "AddonTV", "Price": 0.00, "Type": "addon" }
+      ],      
+      "total":0.00//TODO
+    },
+    {
+      "descricao":"Internet (Fibra) + TV + 60 canais",
+      "pacote":[
+        {"id":2, "Name": "Broadband2", "Price": 60.00, "Type": "bb" },
+        {"id":3, "Name": "TV1", "Price": 50.00, "Type": "tv" },
+        {"id":7, "Name": "AddonTV", "Price": 0.00, "Type": "addon" },
+        {"id":8, "Name": "AddonTV-Ex1", "Price": 0.00, "Type": "addon" }
+      ],      
+      "total":0.00//TODO
+    },
+    {
+      "descricao":"Internet (Fibra) + TV + 90 canais",
+      "pacote":[
+        {"id":2, "Name": "Broadband2", "Price": 60.00, "Type": "bb" },
+        {"id":3, "Name": "TV1", "Price": 50.00, "Type": "tv" },
+        {"id":7, "Name": "AddonTV", "Price": 0.00, "Type": "addon" },
+        {"id":8, "Name": "AddonTV-Ex1", "Price": 0.00, "Type": "addon" },
+        {"id":9, "Name": "AddonTV-Ex2", "Price": 0.00, "Type": "addon" }       
+      ],      
+      "total":0.00//TODO
+    },
+    
+    
+
+
+    
   ]
     
   
