@@ -7,39 +7,24 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/list-all-broadband', function (req, res, next) {
-  res.send(
-
-    montarCombos().sort(function (p1, p2) {
-      return p1.total - p2.total;
-    })
-
+  res.send(montarCombos().sort(function (p1, p2) {
+    return p1.total - p2.total;
+  })
     // montarCombos()
-
-
-
   )
 });
+
 var planos = [
   { "id": 1, "name": "Broadband1", "price": 40.00, "type": "bb", "additionalPrice": 0.00 },
   { "id": 2, "name": "Broadband2", "price": 60.00, "type": "bb", "additionalPrice": 0.00 },
   { "id": 3, "name": "TV1", "price": 50.00, "type": "tv", "additionalPrice": -10.00 },
   { "id": 4, "name": "TV2", "price": 120.00, "type": "tv", "additionalPrice": -20.00 },
-  { "id": 5, "name": "Landline", "price": 35.00, "type": "ll", "additionalPrice": 0.00 },//-10.00
+  { "id": 5, "name": "Landline", "price": 35.00, "type": "ll", "additionalPrice": 0.00 },
   { "id": 6, "name": "AddonBB", "price": 0.00, "type": "addon", "additionalPrice": 10.00 },
-  { "id": 7, "name": "AddonTV", "price": 0.00, "type": "addon", "additionalPrice": 35.00 },
+  { "id": 7, "name": "AddonTV", "price": 0.00, "type": "addon", "additionalPrice": 35.00 },//35.00 vindo do 3 | 15.00 se vier do 4
   { "id": 8, "name": "AddonTV-Ex1", "price": 0.00, "type": "addon", "additionalPrice": 10.00 },
   { "id": 9, "name": "AddonTV-Ex2", "price": 0.00, "type": "addon", "additionalPrice": 5.00 }
 ];
-
-// function getPlano1() { return planos[0] }
-// function getPlano2() { return planos[1] }
-// function getPlano3() { return planos[2] }
-// function getPlano4() { return planos[3] }
-// function getPlano5() { return planos[4] }
-// function getPlano6() { return planos[5] }
-// function getPlano7() { return planos[6] }
-// function getPlano8() { return planos[7] }
-// function getPlano9() { return JSON.stringify(planos[8]) }
 
 var possibilidades = [];
 
@@ -89,9 +74,9 @@ function definirRegrasBB1() {
 function definirRegrasBB2() {
   var additionalPrice = -10;
   planos[4].additionalPrice = additionalPrice;
-  var x = [planos[1], planos[2], planos[3], planos[4], planos[5]]//, planos[6], planos[7], planos[8]];
+  var x = [planos[1], planos[2], planos[3], planos[4], planos[5]]//, planos[6], planos[7], planos[8]]; //Tratar com 6, 7 e 8
+  // var y = [planos[6], planos[7], planos[8]];
   var possuiTV1 = false;
-  // var tv2 = false;
   possibilidades.push(criarPlanoJSON([planos[1]]));
 
   for (i = 0; i < x.length; ++i) {
@@ -130,10 +115,31 @@ function definirRegrasBB2() {
     }
   }
 
+  adicionarRegraParaLandline();
+  adicionarRegrasParaPacotesDeTvAdicionais();
+
+}
+
+function adicionarRegrasParaPacotesDeTvAdicionais() {
+  var y = [planos[6], planos[7], planos[8]];
+  for (var a = 0; a < possibilidades.length; ++a) {
+    for (var b = 0; b < possibilidades[a].pacote.length; b++) {
+      if (possibilidades[a].pacote[b].id === 3) {
+        //TODO Adicionar pacotes com TV1
+        possibilidades.push(criarPlanoJSON([y[0]]))
+      }
+
+      if (possibilidades[a].pacote[b].id === 4) {
+        //TODO Adicionar pacotes com TV2
+      }
+    }
+  }
+}
+
+function adicionarRegraParaLandline() {
+  var total = 0;
   var possuiLandline = false;
   var possuiTV2 = false;
-
-  var total = 0;
 
   for (var a = 0; a < possibilidades.length; ++a) {
     for (var b = 0; b < possibilidades[a].pacote.length; b++) {
@@ -151,19 +157,18 @@ function definirRegrasBB2() {
           possibilidades[a].total = possibilidades[a].total - 20;
         }
       }
-      console.log(possibilidades[a].pacote[b].id + ' - ' + possibilidades[a].pacote[b].name + ' (' + possibilidades[a].pacote[b].price + '/' + possibilidades[a].pacote[b].additionalPrice + ')')
+      // console.log(possibilidades[a].pacote[b].id + ' - ' + possibilidades[a].pacote[b].name + ' (' + possibilidades[a].pacote[b].price + '/' + possibilidades[a].pacote[b].additionalPrice + ')')
     }
 
-    if (possuiTV2 == true) { console.log('TV [YES]') }
-    if (possuiLandline == true) { console.log('FIXO [YES]') }
-    console.log('R$', possibilidades[a].total)
-    console.log('------------------------------------------')
+    // if (possuiTV2 == true) { console.log('TV [YES]') }
+    // if (possuiLandline == true) { console.log('FIXO [YES]') }
+    // console.log('R$', possibilidades[a].total)
+    // console.log('------------------------------------------')
 
     possuiLandline = false;
     possuiTV2 = false;
   }
 
-  planos[4].additionalPrice = 0;
 }
 
 function criarPlanoJSON(plano) {
