@@ -8,18 +8,14 @@ router.get('/', function (req, res, next) {
 
 router.get('/list-all-broadband', function (req, res, next) {
   res.send(
-    // [
-    //myFunction(0, 0),myFunction(0, 0)// BASE DE MYFUNCTION ESTÁ TRAZENDO CORRETAMENTE//DUAS CHAMADAS PARA BB1 E BB2
-    //gerarCombinacoesBB1(5, 3)
+
     montarCombos().sort(function (p1, p2) {
       return p1.total - p2.total;
     })
 
-    // ].sort(function (p1, p2) {
-    //   return p1.total - p2.total;
-    // })
+    // montarCombos()
 
-    // ]
+
 
   )
 });
@@ -28,7 +24,7 @@ var planos = [
   { "id": 2, "name": "Broadband2", "price": 60.00, "type": "bb", "additionalPrice": 0.00 },
   { "id": 3, "name": "TV1", "price": 50.00, "type": "tv", "additionalPrice": -10.00 },
   { "id": 4, "name": "TV2", "price": 120.00, "type": "tv", "additionalPrice": -20.00 },
-  { "id": 5, "name": "Landline", "price": 35.00, "type": "ll", "additionalPrice": -10.00 },
+  { "id": 5, "name": "Landline", "price": 35.00, "type": "ll", "additionalPrice": 0.00 },//-10.00
   { "id": 6, "name": "AddonBB", "price": 0.00, "type": "addon", "additionalPrice": 10.00 },
   { "id": 7, "name": "AddonTV", "price": 0.00, "type": "addon", "additionalPrice": 35.00 },
   { "id": 8, "name": "AddonTV-Ex1", "price": 0.00, "type": "addon", "additionalPrice": 10.00 },
@@ -48,7 +44,6 @@ var planos = [
 var possibilidades = [];
 
 function montarCombos() {
-  //definindo nós iniciais
   var broadbands = [];
   for (var i = 0; i < planos.length; ++i) {
     if (planos[i].type === 'bb') {
@@ -62,11 +57,6 @@ function montarCombos() {
   }
   return possibilidades;
 }
-
-// function criarCombinacoes(broadbandInicial) {
-//   var arrayDeCombinacoes = gerarCombinacoesPossiveis(broadbandInicial);
-//   return arrayDeCombinacoes;
-// }
 
 function criarCombinacoes(broadbandInicial) {
   if (broadbandInicial.id === 1) {
@@ -82,7 +72,7 @@ function definirRegrasBB1() {
   planos[4].additionalPrice = -5;
   var i, j, k, x = [planos[0], planos[4], planos[5]];
   possibilidades.push(criarPlanoJSON([planos[0]]));
-  
+
   for (i = 0; i < x.length; ++i) {
     if (x[i] === x[0]) {
       for (j = i + 1; j < x.length; ++j) {
@@ -93,13 +83,15 @@ function definirRegrasBB1() {
       }
     }
   }
+  planos[4].additionalPrice = 0;
 }
 
 function definirRegrasBB2() {
-  planos[4].additionalPrice = -10;
+  var additionalPrice = -10;
+  planos[4].additionalPrice = additionalPrice;
   var x = [planos[1], planos[2], planos[3], planos[4], planos[5]]//, planos[6], planos[7], planos[8]];
-  var tv1 = false;
-  var tv2 = false;
+  var possuiTV1 = false;
+  // var tv2 = false;
   possibilidades.push(criarPlanoJSON([planos[1]]));
 
   for (i = 0; i < x.length; ++i) {
@@ -107,30 +99,71 @@ function definirRegrasBB2() {
       for (j = i + 1; j < x.length; ++j) {
         possibilidades.push(criarPlanoJSON([x[i], x[j]]));
         if (x[j].id === 3) {
-          tv1 = true;
+          possuiTV1 = true;
         }
         for (k = j + 1; k < x.length; ++k) {
-          if (tv1 == true && x[k].id === 4) {            
-            console.log('err 1')
-            tv2 = true;            
-            console.log('Se plano 3 ja existe nao inserimos o plano 4 \n Não há necessidade de tratar o inverso')
-          } else {
+          if (possuiTV1 == false || x[k].id !== 4) {
             possibilidades.push(criarPlanoJSON([x[i], x[j], x[k]]));
-          }
+          } 
+          // if (possuiTV1 == true && x[k].id === 4) {
+          //   // tv2 = true;
+          //   console.log('Se plano 3 ja existe nao inserimos o plano 4 \n Não há necessidade de tratar o inverso')
+          // } else {
+          //   possibilidades.push(criarPlanoJSON([x[i], x[j], x[k]]));
+          // }
+
           for (l = k + 1; l < x.length; ++l) {
-            if (tv1 == true && x[k].id === 4) {
-              console.log('err 2')
-              tv2 = true;
-              //TODO tratar a linha fixa que tambem pode ter adicional de -30
-              //x[k].additionalPrice = -30
-            } else {              
+            if (possuiTV1 == false || x[k].id !== 4) {
               possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l]]));
-            }
+            } 
+            // if (possuiTV1 == true && x[k].id === 4) {
+            //   // tv2 = true;
+            //   // if (x[l].id === 5) { x[l].additionalPrice = -30; }
+            // } else {
+            //   // if (x[k].id === 5 && tv2 == true) { x[k].additionalPrice = -30; }
+            //   possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l]]));
+            // }
+
           }
         }
       }
     }
   }
+  
+  var possuiLandline = false;
+  var possuiTV2 = false;
+
+  var total = 0;
+
+  for (var a = 0; a < possibilidades.length; ++a) {
+    for (var b = 0; b < possibilidades[a].pacote.length; b++) {
+
+      if (possibilidades[a].pacote[b].id === 4) {
+        possuiTV2 = true;
+      }
+      if (possibilidades[a].pacote[b].id === 5) {
+        possuiLandline = true;
+      }
+
+      if (possuiLandline == true && possuiTV2 == true) {
+        if (possibilidades[a].pacote[b].id === 5) {
+          possibilidades[a].pacote[b].additionalPrice = -30;
+          possibilidades[a].total = possibilidades[a].total -20;
+        }
+      } 
+      console.log(possibilidades[a].pacote[b].id + ' - ' + possibilidades[a].pacote[b].name + ' (' + possibilidades[a].pacote[b].price + '/' + possibilidades[a].pacote[b].additionalPrice + ')')
+    }
+
+    if (possuiTV2 == true) { console.log('TV [YES]') }
+    if (possuiLandline == true) { console.log('FIXO [YES]') }
+    console.log('R$', possibilidades[a].total)
+    console.log('------------------------------------------')
+    
+    possuiLandline = false;
+    possuiTV2 = false;
+  }
+
+  planos[4].additionalPrice = 0;
 }
 
 function criarPlanoJSON(plano) {
