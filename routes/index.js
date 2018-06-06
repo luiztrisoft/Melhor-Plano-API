@@ -104,7 +104,7 @@ function definirRegrasBB2() {
         for (k = j + 1; k < x.length; ++k) {
           if (possuiTV1 == false || x[k].id !== 4) {
             possibilidades.push(criarPlanoJSON([x[i], x[j], x[k]]));
-          } 
+          }
           // if (possuiTV1 == true && x[k].id === 4) {
           //   // tv2 = true;
           //   console.log('Se plano 3 ja existe nao inserimos o plano 4 \n Não há necessidade de tratar o inverso')
@@ -115,7 +115,7 @@ function definirRegrasBB2() {
           for (l = k + 1; l < x.length; ++l) {
             if (possuiTV1 == false || x[k].id !== 4) {
               possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l]]));
-            } 
+            }
             // if (possuiTV1 == true && x[k].id === 4) {
             //   // tv2 = true;
             //   // if (x[l].id === 5) { x[l].additionalPrice = -30; }
@@ -129,7 +129,7 @@ function definirRegrasBB2() {
       }
     }
   }
-  
+
   var possuiLandline = false;
   var possuiTV2 = false;
 
@@ -148,9 +148,9 @@ function definirRegrasBB2() {
       if (possuiLandline == true && possuiTV2 == true) {
         if (possibilidades[a].pacote[b].id === 5) {
           possibilidades[a].pacote[b].additionalPrice = -30;
-          possibilidades[a].total = possibilidades[a].total -20;
+          possibilidades[a].total = possibilidades[a].total - 20;
         }
-      } 
+      }
       console.log(possibilidades[a].pacote[b].id + ' - ' + possibilidades[a].pacote[b].name + ' (' + possibilidades[a].pacote[b].price + '/' + possibilidades[a].pacote[b].additionalPrice + ')')
     }
 
@@ -158,7 +158,7 @@ function definirRegrasBB2() {
     if (possuiLandline == true) { console.log('FIXO [YES]') }
     console.log('R$', possibilidades[a].total)
     console.log('------------------------------------------')
-    
+
     possuiLandline = false;
     possuiTV2 = false;
   }
