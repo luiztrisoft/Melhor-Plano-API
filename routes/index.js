@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
@@ -10,7 +9,6 @@ router.get('/list-all-broadband', function (req, res, next) {
   res.send(montarCombos().sort(function (p1, p2) {
     return p1.total - p2.total;
   })
-    // montarCombos()
   )
 });
 
@@ -21,7 +19,7 @@ var planos = [
   { "id": 4, "name": "TV2", "price": 120.00, "type": "tv", "additionalPrice": -20.00 },
   { "id": 5, "name": "Landline", "price": 35.00, "type": "ll", "additionalPrice": 0.00 },
   { "id": 6, "name": "AddonBB", "price": 0.00, "type": "addon", "additionalPrice": 10.00 },
-  { "id": 7, "name": "AddonTV", "price": 0.00, "type": "addon", "additionalPrice": 35.00 },//35.00 vindo do 3 | 15.00 se vier do 4
+  { "id": 7, "name": "AddonTV", "price": 0.00, "type": "addon", "additionalPrice": 35.00 },
   { "id": 8, "name": "AddonTV-Ex1", "price": 0.00, "type": "addon", "additionalPrice": 10.00 },
   { "id": 9, "name": "AddonTV-Ex2", "price": 0.00, "type": "addon", "additionalPrice": 5.00 }
 ];
@@ -36,7 +34,6 @@ function montarCombos() {
     }
   }
   possibilidades = [];
-
   for (var i = 0; i < broadbands.length; ++i) {
     criarCombinacoes(broadbands[i]);
   }
@@ -74,8 +71,8 @@ function definirRegrasBB1() {
 function definirRegrasBB2() {
   var additionalPrice = -10;
   planos[4].additionalPrice = additionalPrice;
-  var x = [planos[1], planos[2], planos[3], planos[4], planos[5]]//, planos[6], planos[7], planos[8]]; //Tratar com 6, 7 e 8
-  // var y = [planos[6], planos[7], planos[8]];
+  var x = [planos[1], planos[2], planos[3], planos[4], planos[5]];
+  var y = [planos[6], planos[7], planos[8]];
   var possuiTV1 = false;
   possibilidades.push(criarPlanoJSON([planos[1]]));
 
@@ -87,88 +84,123 @@ function definirRegrasBB2() {
           possuiTV1 = true;
         }
         for (k = j + 1; k < x.length; ++k) {
-          if (possuiTV1 == false || x[k].id !== 4) {
-            possibilidades.push(criarPlanoJSON([x[i], x[j], x[k]]));
-          }
-          // if (possuiTV1 == true && x[k].id === 4) {
-          //   // tv2 = true;
-          //   console.log('Se plano 3 ja existe nao inserimos o plano 4 \n Não há necessidade de tratar o inverso')
-          // } else {
-          //   possibilidades.push(criarPlanoJSON([x[i], x[j], x[k]]));
-          // }
-
-          for (l = k + 1; l < x.length; ++l) {
-            if (possuiTV1 == false || x[k].id !== 4) {
-              possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l]]));
+          if (possuiTV1 == true && x[k].id === 4) {
+            for (m = 0; m < y.length; ++m) {
+              if (y[m].id === 7) {
+                var possuiAddonTV1 = true;
+                possibilidades.push(criarPlanoJSON([x[i], x[j], y[m]]));
+                if (possuiAddonTV1 == true) {
+                  for (n = m + 1; n < y.length; ++n) {
+                    if (y[n].id === 8) {
+                      var possuiAddonTV2 = true;
+                      possibilidades.push(criarPlanoJSON([x[i], x[j], y[m], y[n]]))
+                      if (possuiAddonTV2 == true) {
+                        for (o = n + 1; o < y.length; ++o) {
+                          possibilidades.push(criarPlanoJSON([x[i], x[j], y[m], y[n], y[o]]))
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-            // if (possuiTV1 == true && x[k].id === 4) {
-            //   // tv2 = true;
-            //   // if (x[l].id === 5) { x[l].additionalPrice = -30; }
-            // } else {
-            //   // if (x[k].id === 5 && tv2 == true) { x[k].additionalPrice = -30; }
-            //   possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l]]));
-            // }
-
+          } else {
+            possibilidades.push(criarPlanoJSON([x[i], x[j], x[k]]));
+            if (x[j].id === 3 || x[j].id === 4) {
+              for (m = 0; m < y.length; ++m) {
+                if (y[m].id === 7) {
+                  var possuiAddonTV1 = true;
+                  possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], y[m]]));
+                  if (possuiAddonTV1 == true) {
+                    for (n = m + 1; n < y.length; ++n) {
+                      if (y[n].id === 8) {
+                        var possuiAddonTV2 = true;
+                        possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], y[m], y[n]]))
+                        if (possuiAddonTV2 == true) {
+                          for (o = n + 1; o < y.length; ++o) {
+                            possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], y[m], y[n], y[o]]))
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          for (l = k + 1; l < x.length; ++l) {
+            if (x[k].id !== 4) {
+              possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l]]));
+              if (x[j].id === 3 || x[j].id === 4) {
+                for (m = 0; m < y.length; ++m) {
+                  if (y[m].id === 7) {
+                    var possuiAddonTV1 = true;
+                    possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l], y[m]]));
+                    if (possuiAddonTV1 == true) {
+                      for (n = m + 1; n < y.length; ++n) {
+                        if (y[n].id === 8) {
+                          var possuiAddonTV2 = true;
+                          possibilidades.push(criarPlanoJSON([x[i], x[j], x[l], x[k], y[m], y[n]]))
+                          if (possuiAddonTV2 == true) {
+                            for (o = n + 1; o < y.length; ++o) {
+                              possibilidades.push(criarPlanoJSON([x[i], x[j], x[k], x[l], y[m], y[n], y[o]]))
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
   }
-
-  adicionarRegraParaLandline();
-  adicionarRegrasParaPacotesDeTvAdicionais();
-
+  definirRegraParaLandline();
+  definirRegrasParaPacotesDeTvAdicionais();
 }
 
-function adicionarRegrasParaPacotesDeTvAdicionais() {
-  var y = [planos[6], planos[7], planos[8]];
-  for (var a = 0; a < possibilidades.length; ++a) {
-    for (var b = 0; b < possibilidades[a].pacote.length; b++) {
-      if (possibilidades[a].pacote[b].id === 3) {
-        //TODO Adicionar pacotes com TV1
-        possibilidades.push(criarPlanoJSON([y[0]]))
-      }
+function definirRegrasParaPacotesDeTvAdicionais() {
+  var total = 0;
+  var possuiTV2 = false;
 
+  for (var a = 0; a < possibilidades.length; a++) {
+    for (var b = 0; b < possibilidades[a].pacote.length; b++) {
       if (possibilidades[a].pacote[b].id === 4) {
-        //TODO Adicionar pacotes com TV2
+        possuiTV2 = true;
+      }
+      if (possuiTV2 == true && possibilidades[a].pacote[b].id === 7) {
+        possibilidades[a].total = possibilidades[a].total - 20;
       }
     }
   }
 }
 
-function adicionarRegraParaLandline() {
+function definirRegraParaLandline() {
   var total = 0;
   var possuiLandline = false;
   var possuiTV2 = false;
 
   for (var a = 0; a < possibilidades.length; ++a) {
     for (var b = 0; b < possibilidades[a].pacote.length; b++) {
-
       if (possibilidades[a].pacote[b].id === 4) {
         possuiTV2 = true;
       }
       if (possibilidades[a].pacote[b].id === 5) {
         possuiLandline = true;
       }
-
       if (possuiLandline == true && possuiTV2 == true) {
         if (possibilidades[a].pacote[b].id === 5) {
           possibilidades[a].pacote[b].additionalPrice = -30;
           possibilidades[a].total = possibilidades[a].total - 20;
         }
       }
-      // console.log(possibilidades[a].pacote[b].id + ' - ' + possibilidades[a].pacote[b].name + ' (' + possibilidades[a].pacote[b].price + '/' + possibilidades[a].pacote[b].additionalPrice + ')')
     }
-
-    // if (possuiTV2 == true) { console.log('TV [YES]') }
-    // if (possuiLandline == true) { console.log('FIXO [YES]') }
-    // console.log('R$', possibilidades[a].total)
-    // console.log('------------------------------------------')
-
     possuiLandline = false;
     possuiTV2 = false;
   }
-
 }
 
 function criarPlanoJSON(plano) {
